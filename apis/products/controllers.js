@@ -16,26 +16,25 @@ exports.productById = (req, res) => {
   return res.json(specificProduct);
 };
 
-exports.productCreate = (req, res) => {
-  // products.push(req.body);
-  // res.json(req.body); this way or one below which add an id to every POST
-  const newProducts = { ...req.body, id: products[products.length - 1].id + 1 };
-  products.push(newProducts);
-  res.status(201);
-  return res.json(newProducts);
+exports.productCreate = async (req, res) => {
+  try {
+    const newProduct = await Product.create(req.body);
+    return res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json({ message: "Error" });
+  }
 };
 
-exports.productDelete = (req, res) => {
-  // const product = products.filter(
-  //   (product) => product.id !== +req.params.productId
-  // ); this way works but adding find is better to check if the id exists first
-  // return res.json(product);
-  const productId = req.params.productId;
-  const product = products.find((product) => product.id === +productId);
-  if (product) {
-    products.filter((product) => product.id !== +productId);
-    return res.status(204).end();
-  } else {
-    return res.status(404).json({ message: "Product not found!" });
+exports.productDelete = async (req, res) => {
+  try {
+    const foundProduct = await Product.findById(req.params.productId);
+    if (foundProduct) {
+      await foundProduct.remove();
+      return res.status(204).end();
+    } else {
+      return res.status(404).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error" });
   }
 };
