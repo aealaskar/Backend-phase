@@ -1,7 +1,12 @@
-const products = require("../../data");
+const Product = require("../../models/Product");
 
-exports.productListFetch = (req, res) => {
-  return res.json(products);
+exports.productListFetch = async (req, res) => {
+  try {
+    const products = await Product.find();
+    return res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Error" });
+  }
 };
 
 exports.productById = (req, res) => {
