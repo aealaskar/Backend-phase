@@ -7,7 +7,6 @@ const {
   productDelete,
   productUpdate,
 } = require("./controllers");
-const products = require("../../data");
 
 router.get("/", productListFetch);
 
